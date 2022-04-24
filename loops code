@@ -8,9 +8,15 @@ elif a==1:
     print(a)
     print(num1)
 else:
-    while count<a:
+    while count<a:  
         print(num1)
         num=num1+num2
         num1=num2
         num2=num
         count+=1
+-----------------------------------------
+num=int(input('enter starting integer'))
+num1=int(input('enter ending integer'))
+for i in range(num,num1):
+    if i%2==0:
+        print(i)

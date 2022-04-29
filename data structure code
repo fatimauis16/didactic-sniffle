@@ -3,7 +3,5 @@ area=3.145*a**2
 print('area of a circle for the given radius',a,'is',area)
 -------------------------
 a=input('input filename')
-for i in a:
-    if i=='py':
-        print('extension is')
-print('extension of the file is python')
+extension=a.split(".")
+print('the extension is :',(extension[-1]))

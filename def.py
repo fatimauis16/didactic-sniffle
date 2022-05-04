@@ -6,4 +6,7 @@ def most_frequent(string):
         else:
             D[i] += 1
     return D
-print(most_frequent('Mississippi'))
+var=(most_frequent('Mississippi'))
+list =(var.keys())
+list =zip(var.values(),var.keys())
+print(sorted(list,reverse=True))

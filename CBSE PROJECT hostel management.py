@@ -9,7 +9,7 @@ else:
 cursor=con.cursor()
 
 cursor.execute("CREATE TABLE IF NOT EXISTS CUSTOMER(Username VARCHAR(10)PRIMARY KEY NOT NULL,Password VARCHAR(11)NOT NULL,No_of_Members CHAR(2)NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS BOOKING(Checkin_Date CHAR(10) PRIMARY KEY NOT NULL,Checkout_Date CHAR(10)NOT NULL,Room_Type VARCHAR(35)NOT NULL,Price CHAR(35)NOT NULL,Phone_No CHAR(11)NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS BOOKING(Checkin_Date CHAR(12) PRIMARY KEY NOT NULL,Checkout_Date CHAR(12)NOT NULL,Room_Type VARCHAR(35)NOT NULL,Price CHAR(35)NOT NULL,Phone_No CHAR(11)NOT NULL)")
 cursor.execute("CREATE TABLE IF NOT EXISTS PAYMENT(Phone_no CHAR(11),Mode_of_payment CHAR(11)NOT NULL)")
 #global list allows to modify values outside the
 
@@ -118,11 +118,11 @@ def Booking():
     else:
         pass
           
-    date( chk_out)
-    d1=datetime.datetime(chk_in[2],chk_in[1],chk_in[0])
-    d2=datetime.datetime( chk_out[2], chk_out[1], chk_out[0])
+    '''date(chk_out)
+    d1=datetime.datetime(int(chk_in[2]),int(chk_in[1]),int(chk_in[0]))
+    d2=datetime.datetime(int(chk_out[2]),int(chk_out[1]),int(chk_out[0]))
     d=(d2-d1).days
-    day.append(d)
+    day.append(d)'''
         
         #rooms
     print("----*SELECT ROOM TYPE*----")
@@ -176,7 +176,7 @@ def Booking():
         payment.append(0)
         if ph_no not in phno:
             phno.append(p1)
-       #ROOMS INFO 
+       #ROOMS INFO
 def Rooms_Info():
     print("         ------ HOTEL ROOMS INFO ------")
     print("")
@@ -208,7 +208,12 @@ def Rooms_Info():
         Home()
     else:
         exit()
-# PAYMENT FUNCTION             
+#ROOM SERVICES
+def Room_Services():
+    print("         ------ ROOM SERVICES ------")
+    print("1.swimming pool\n2. Airport shuttle\n3.Fitness centre\nSpa and wellness centre\nNon-smoking rooms")
+    print("")
+# PAYMENT FUNCTION
 def Payment():
       
     ph=str(input("Phone Number: "))
@@ -294,5 +299,4 @@ def Record():# checks if any record exists or not
           
     else:
         exit()
-Home()
-                
+Home()     

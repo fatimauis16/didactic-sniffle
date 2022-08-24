@@ -24,7 +24,7 @@ record=[]
 payment=[]
 roomno=[]
 customer_id=[]
-day=[]
+days=[]
 i = 0
 
 def Home():
@@ -110,10 +110,14 @@ def Booking():
         checkout.pop(i)
         Booking()
     else:
-        chk_in=date(checkin_date)
-        chk_out=date(checkout_date)
-        stay= chk_in - chk_out
-        print(stay.days)
+       pass
+     def days():
+        for i in range (len(chk_in)):
+            date_in=date(checkin_date[i])
+            date_out=date(checkout_date[i])
+            days_spent=date_out - date_in
+            days.append(days_spent)
+            print(days_spent)
 
     
      #rooms

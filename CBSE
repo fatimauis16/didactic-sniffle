@@ -1,5 +1,5 @@
 import random
-import datetime
+from datetime import datetime
 import mysql.connector as m
 con=m.connect(host='localhost',user='root',password='root',database='hostel')
 if con.is_connected():
@@ -7,35 +7,30 @@ if con.is_connected():
 else:
     print('error')
 cursor=con.cursor()
+cursor.execute("CREATE TABLE IF NOT EXISTS BOOKING(name VARCHAR(10)PRIMARY KEY NOT NULL,Address VARCHAR(15)NOT NULL,Checkin_Date CHAR(12) NOT NULL,Checkout_Date CHAR(12)NOT NULL,Room_Type VARCHAR(35)NOT NULL,Price CHAR(35)NOT NULL,Phone_No CHAR(11)NOT NULL)")
+cursor.execute("CREATE TABLE IF NOT EXISTS PAYMENT(Phone_no CHAR(11),Mode_of_payment CHAR(11)NOT NULL,roomno CHAR(6),custid CHAR(9)NOT NULL)")
 
-cursor.execute("CREATE TABLE IF NOT EXISTS CUSTOMER(Username VARCHAR(10)PRIMARY KEY NOT NULL,Password VARCHAR(11)NOT NULL,No_of_Members CHAR(2)NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS BOOKING(Checkin_Date CHAR(12) PRIMARY KEY NOT NULL,Checkout_Date CHAR(12)NOT NULL,Room_Type VARCHAR(35)NOT NULL,Price CHAR(35)NOT NULL,Phone_No CHAR(11)NOT NULL)")
-cursor.execute("CREATE TABLE IF NOT EXISTS PAYMENT(Phone_no CHAR(11),Mode_of_payment CHAR(11)NOT NULL)")
-#global list allows to modify values outside the
 
 name=[]
 phone_no=[]
 address=[]
-checkin_date=[]
-checkout_date=[]
 room=[]
-price=[]
+price_dict={}
 record=[]
 payment=[]
-roomno=[]
-customer_id=[]
 days=[]
-i = 0
-
+L_1=[]
+L_2=[]
+roomno = []
+custid = []
 def Home():
     print("\t\t\t\t\t\t WELCOME TO GOLDEN ROSE HOSTEL \n")
     print("\t\t\t 1 Booking\n")
     print("\t\t\t 2 Rooms Info\n")
     print("\t\t\t 3 Services\n")
-    print("\t\t\t 4 Payment\n")
-    print("\t\t\t 5 Hostel rules\n")
-    print("\t\t\t 6 Record\n")
-    print("\t\t\t 7 Rules\n")
+    print("\t\t\t 4 Hostel rules\n")
+    print("\t\t\t 5 Record\n")
+    print("\t\t\t 6 Payment\n")
     print("\t\t\t 0 Exit\n")
     
     ch=int(input("=>"))
@@ -53,36 +48,34 @@ def Home():
      
     elif ch==4:
         print(" ")
-        Payment()
+        Hostel_Rules()
       
     elif ch==5:
         print(" ")
-        Rules()
+        Record()
         
     elif ch==6:
         print(" ")
-        Record()
+        Payment()
       
-    elif ch==7:
+    elif ch==0:
         print(" ")
-        Rules()
+        Home
     else:
         exit()
 #date used in booking
-def customer  ():
-    while True:
-        username=input('enter your username')
-        password=int(input('enter password'))
-        members=int(input('enter number of members'))
+
 def date(d):
-    if d[2]>'2021' and d[2]=='2022':
-        if d[1]!=0 and d[1]<='12':
-            if d[1]==2 and d[0]!=0 and d[0]<='28':
-                if d[0]!=0 and d[0]<='31':
-                    pass
+    if d[2]>'2021' and d[2]=='2022':#to make sure the year is 2022 not more or less
+        if d[1]!=0 and d[1]<='12':#to make sure month entered is not zero or more than 12
+            if d[1]==2 and d[0]!=0 and d[0]<='28':#in the month of feb, date is not zero or more than 28
+                if d[0]!=0 and d[0]<='31':#for other months date is not 0 or more than 31
+                    pass#if the date matches all the conditions pass
     else:
-        print("Invalid   date\n")
+        print("Invalid   date,please try again\n")#else enter the date again
+        exit
 def Booking():
+    global delta
     print("BOOKING ROOMS")
     print("")
     while True:
@@ -98,29 +91,34 @@ def Booking():
         else:
             print("\t Name,Phone_No and Address *this field is required* ")
             
-    chk_in=str(input("Check-In: "))
-    checkin_date.append(chk_in)
-    chk_out=str(input("Check-Out: "))
-    checkout_date.append(chk_out)
-    if  chk_out[1]<chk_in[1] and  chk_out[2]<chk_in[2] and  chk_out[1]==chk_in[1] and  chk_out[2]>=chk_in[2] and  chk_out[0]<=chk_in[0]:
+            
+    Check_in=input('enter the check-in date:')#taking  checkin input
+    L_1.append(Check_in)#adding value to list
+    Check_out=(input('enter the check-out date:'))#  taking checkout input
+    L_2.append(Check_out)#adding value to list
+    #strptime is a method in datetime it is timeformat which is used to store the data in
+    #various formats 
+    ci= datetime.strptime(Check_in, "%Y/%m/%d")
+    co = datetime.strptime(Check_out, "%Y/%m/%d")
+    delta = co - ci#subtracting checkin frm checkout to get the number of stays
+    print(delta.days)#delta will convert everything into seconds
+#then all will be converted to days
+#making the calculations simpler
+
+        
+    if  Check_out[1]<Check_in[1] and  Check_out[2]<Check_in[2] and  Check_out[1]==Check_in[1] and  Check_out[2]>=Check_in[2] and  Check_out[0]<=Check_in[0]:
         print("\n\tError Found\n\t please make sure Check-Out date must fall after Check-In\n")
+        #checkout month,year or date should not be less then check in
+        #if so then the information entered will be removed respectively
         name.pop(i)
         add.pop(i)
         checkin.pop(i)
         checkout.pop(i)
         Booking()
     else:
-       pass
-     def days():
-        for i in range (len(chk_in)):
-            date_in=date(checkin_date[i])
-            date_out=date(checkout_date[i])
-            days_spent=date_out - date_in
-            days.append(days_spent)
-            print(days_spent)
-
-    
-     #rooms
+        pass
+        
+     #selecting rooms
     print("----*SELECT ROOM TYPE*----")
     print(" 1. Standard Non-AC")
     print(" 2. Standard AC")
@@ -130,54 +128,72 @@ def Booking():
         
     ch=int(input("=>"))
     if ch==0:
-        print(" 1. Standard Non-AC - Rs. 3500")
-        print(" 2. Standard AC - Rs. 4000")
-        print(" 3. 3-Bed Non-AC - Rs. 4500")
-        print(" 4. 3-Bed AC - Rs. 5000")
+        print(" 1. Standard Non-AC - Dh. 3500")
+        print(" 2. Standard AC - Dh. 4000")
+        print(" 3. 3-Bed Non-AC - Dh. 4500")
+        print(" 4. 3-Bed AC - Dh. 5000")
         ch=int(input("=>"))
     if ch==1:
         room.append('Standard Non-AC')
         print("Room Type- Standard Non-AC")
-        price.append(2500)
-        print("Price- 3500")
+        print("Price- Dh 3500")
+        new_key='price'
+        new_value=3500
+        price_dict[new_key]=new_value#adding keys and values to the price dictionary
     elif ch==2:
         room.append('Standard AC')
         print("Room Type- Standard AC")
-        price.append(3500)
-        print("Price- 4000")
+        print("Price-Dh 4000")
+        new_key='price'
+        new_value=4000
+        price_dict[new_key]=new_value
     elif ch==3:
         room.append('3-Bed Non-AC')
         print("Room Type- 3-Bed Non-AC")
-        price.append(4500)
-        print("Price- 4500")
+        print("Price-Dh 4500")
+        new_key='price'
+        new_value=4500
+        price_dict[new_key]=new_value
     elif ch==4:
         room.append('3-Bed AC')
         print("Room Type- 3-Bed AC")
-        price.append(5500)
-        print("Price- 5000")
+        print("Price-Dh 5000")
+        new_key='price'
+        new_value=5000
+        price_dict[new_key]=new_value
     else:
         print("Please Try Again!!")
-    n=int(input("0-BACK\n =>"))
+        
+    # randomly generating room no. and customer 
+    # id for customer
+    rn = random.randrange(40)+300
+    cid = random.randrange(40)+10
+    roomno.append(rn)
+    custid.append(cid)
+    
+    n=int(input("0-Back To Home Page\n =>"))
     if n==0:
         Home()
     else:
         exit
+    
+
 def Rooms_Info():
-    print("         ------ HOTEL ROOMS INFO ------")
+    print("         ------ HOSTEL ROOMS INFO ------")
     print("")
     print("STANDARD NON-AC")
     print("---------------------------------------------------------------")
-    print("Room amenities include: 1 Double Bed, Television, Telephone,")
+    print("Room amenities include: 1 Double Bed,1 Table Fan, Television, Telephone,")
     print("Double-Door Cupboard, 1 Coffee table with 2 sofa, Balcony and")
     print("an attached washroom with hot/cold water.\n")
-    print("STANDARD NON-AC")
+    print("STANDARD AC")
     print("---------------------------------------------------------------")
     print("Room amenities include: 1 Double Bed, Television, Telephone,")
     print("Double-Door Cupboard, 1 Coffee table with 2 sofa, Balcony and")
     print("an attached washroom with hot/cold water + Window/Split AC.\n")
     print("3-Bed NON-AC")
     print("---------------------------------------------------------------")
-    print("Room amenities include: 1 Double Bed + 1 Single Bed, Television,")
+    print("Room amenities include: 1 Double Bed + 1 Single Bed,2 Table fan, Television,")
     print("Telephone, a Triple-Door Cupboard, 1 Coffee table with 2 sofa, 1")
     print("Side table, Balcony with an Accent table with 2 Chair and an")
     print("attached washroom with hot/cold water.\n")
@@ -188,7 +204,7 @@ def Rooms_Info():
     print("1 Side table, Balcony with an Accent table with 2 Chair and an")
     print("attached washroom with hot/cold water + Window/Split AC.\n\n")
     print()
-    n=int(input("0-BACK\n =>"))
+    n=int(input("0-Back To Home Page\n =>"))
     if n==0:
         Home()
     else:
@@ -200,74 +216,79 @@ def Services():
     print("2.BEDROOM:\nLinen\nWardrobe\n3.KITCHEN:\nShared kitchen\nDining table\nOven")
     print("4.Internet:WiFi is available in all areas and is free of charge.")
     print("5.Parking:No parking available.")
-    n=int(input("0-BACK\n =>"))
+    n=int(input("0-Back To Home Page\n =>"))
     if n==0:
         Home()
     else:
         exit       
 # PAYMENT FUNCTION
 def Payment():
-    ph=str(input("Phone Number: "))
     print(" Payment")
     print(" --------------------------------")
     print("  MODE OF PAYMENT")
     print("  1- Credit/Debit Card")
-    print("  2- Paytm/PhonePe")
+    print("  2- Paytm")
     print("  3- Using UPI")
     print("  4- Cash")
-    x=int(input("=> "))
-    print("\n  Amount: ",(price[n]*day[n])+record[n])
-    print("\n        PAY FOR GOLDEN ROSE ")
+    p=int(input("=> "))
+    print("\n  Amount:Dh",{key: value * delta.days for key, value in price_dict.items()})
+    print("\n        Proceed To Payment=>  ")
     print("  (y/n)")
     ch=str(input("=>"))
     if ch=='y' or ch=='Y':
         print("\n\n --------------------------------")
-        print("           Hotel GOLDEN ROSE")
+        print("           HOSTEL GOLDEN ROSE")
         print(" --------------------------------")
         print("              Bill")
         print(" --------------------------------")
-        print(" Name: ",name[n],"\t\n Phone No.: ",phno[n],"\t\n Address: ",add[n],"\t")
-        print("\n Check-In: ",checkin[n],"\t\n Check-Out: ",checkout[n],"\t")
-        print("\n Room Type: ",room[n],"\t\n Room Charges: ",price[n]*day[n],"\t")
+        print(" Name: ",name,"\t\n Phone No.: ",phone_no,"\t\n Address: ",address,"\t")
+        print("\n Check-In: ",L_1,"\t\n Check-Out: ",L_2,"\t")
+        print("\n Room Type: ",room,"\t\n Room Charges: ",{key: value * delta.days for key, value in price_dict.items()},"\t")
+        print("\n Room number:",roomno,"\t\n Customer id:",custid)
         print(" --------------------------------")
-        print("\n Total Amount: ",(price[n]*day[n])+record[n],"\t")
-        print(" --------------------------------")
+        print("\n\tPayment has been Made :)\n\n")
         print("          Thank You")
         print("          Visit Again :)")
         print(" --------------------------------\n")
-        p.pop(n)
-        p.insert(n,1)
-        roomno.pop(n)
-        custid.pop(n)
-        roomno.insert(n,0)
-        custid.insert(n,0)
-    else:
-        f=1
-        print("\n\tPayment has been Made :)\n\n")
-    n=int(input("0-BACK\n =>"))
-    if n==0:
-        Home()
-    else:
-        exit
+        n=int(input("0-Back To Home Page\n =>"))
+        if n==0:
+            Home()
+        else:
+            exit
             
 #Rules
-def Rules():
+def Hostel_Rules():
     print("         ------ RULES TO BE FOLLOWED ------")
     print("1.Cancellation and prepayment policies vary according to accommodation type")
     print("2.Refundable damage deposit:A damage deposit of AED 100 is required on arrival. This will be collected as a cash payment. You should be reimbursed on check-out. Your deposit will be refunded in full in cash, subject to an inspection of the property.")
     print("3.Children are not allowed\nExtra bed policies:\nThere is no capacity for extra beds at this property")
     print("4.Age restriction:\nThe minimum age for check-in is 18")
     print("5.Pets:\nPets are not allowed.")
-    choice=input("do u accept all the rules:yes or no")
+    choice=input("do u accept all the rules?yes or no:")
     if choice=='yes':
         pass
     else:
         exit
-    n=int(input("0-BACK\n =>"))
+    n=int(input("0-Back To Home Page\n =>"))
     if n==0:
         Home()
     else:
         exit
-
+        
+def Record():
+    if phone_no!=[]:
+        print("        *** HOSTEL RECORD ***\n")
+        print("| Name        | Phone No.    | Address       | Check-In  | Check-Out     | Room Type     | Price      | Room No     | Customer Id     ")
+        print("----------------------------------------------------------------------------------------------------------------------")
+        print("|",name,"\t |",phone_no,"\t|",address,"\t|",L_1,"\t|",L_2,"\t|",room,"\t|",price_dict,"\t|",roomno,"\t|",custid)
+        print("----------------------------------------------------------------------------------------------------------------------")
+    else:
+        print("No Records Found")
+    n = int(input("0-BACK\n ->"))
+    if n == 0:
+        Home()
+          
+    else:
+        exit()
+  
 Home()
-

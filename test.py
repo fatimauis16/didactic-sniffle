@@ -238,6 +238,20 @@ def Record():# checks if any record exists or not
     else:
         print("No Records Found")
 
+def hostel_rules():
+    print("         ------ RULES TO BE FOLLOWED ------")
+    print("1.Cancellation and prepayment policies vary according to accommodation type")
+    print("2.Refundable damage deposit:A damage deposit of AED 100 is required on arrival. This will be collected as a cash payment. You should be reimbursed on check-out. Your deposit will be refunded in full in cash, subject to an inspection of the property.")
+    print("3.Children are not allowed\nExtra bed policies:\nThere is no capacity for extra beds at this property")
+    print("4.Age restriction:\nThe minimum age for check-in is 18")
+    print("5.Pets:\nPets are not allowed.")
+    choice=input("do u accept all the rules?yes or no:")
+    if choice=='yes':
+        pass
+    else:
+        exit 
+
+
 def main():
     while True:
         print("\t\t\t\t\t\t WELCOME TO GOLDEN ROSE HOSTEL \n")
@@ -269,7 +283,7 @@ def main():
             
         elif ch==5:
             print(" ")
-            # TODO: add hostel rules
+            hostel_rules()
         
         elif ch==6:
             print(" ")
